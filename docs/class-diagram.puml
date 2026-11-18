@@ -1,0 +1,159 @@
+@startuml Event Stream Analyzer
+
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty members
+
+title Event Stream Analyzer: Class Diagram
+
+class Main {
+  + main(args)
+}
+
+class AnalyzerApplication {
+  + run(args, out, err) : int
+}
+
+class AnalyzerFactory <<Factory>> {
+  + createLineParser()
+  + createClassifierChain()
+  + createAggregationEngine()
+  + createReportWriter(format)
+  + createAnalyzer()
+}
+
+class EventStreamAnalyzer {
+  + analyze(inputFile) : List<ReportFile>
+}
+
+interface LineParser {
+  + parse(line) : Optional<ParsedLine>
+}
+
+class KeyValueLineParser
+
+class ParsedLine {
+  + get(key)
+  + getDouble(key)
+  + getLong(key)
+}
+
+abstract class RecordClassifier <<Chain of Responsibility>> {
+  + classify(line) : Optional<EventRecord>
+  # tryClassify(line)
+}
+
+class SensorReadingClassifier
+class DeviceEventClassifier
+class AccessRecordClassifier
+
+interface EventRecord
+
+class SensorReading <<record>> {
+  sensor : String
+  reading : double
+}
+
+class DeviceEvent <<record>> {
+  device : String
+  severity : Severity
+}
+
+class AccessRecord <<record>> {
+  user : String
+  door : String
+  result : String
+  durationMs : long
+}
+
+enum Severity {
+  CRITICAL
+  ERROR
+  WARN
+  INFO
+  rank
+}
+
+interface Aggregator <<Strategy>> {
+  + accept(record)
+  + buildReport()
+}
+
+class SensorAggregator
+class DeviceAggregator
+class AccessAggregator
+
+class AggregationEngine {
+  + register(aggregator)
+  + accept(record)
+  + buildReports()
+}
+
+class ReportFile {
+  fileName : String
+  model : Object
+}
+
+class SensorStats <<record>>
+class DeviceReport <<record>>
+class DeviceStats <<record>>
+class DoorStats <<record>>
+class DecisionTimes <<record>>
+
+class Statistics {
+  + medianOfSorted()
+  + populationStdDev()
+  + percentileNearestRank()
+  + roundToOneDecimal()
+}
+
+interface ReportWriter <<Strategy>> {
+  + write(outdir, reports)
+}
+
+class JsonReportWriter
+
+Main --> AnalyzerApplication
+AnalyzerApplication --> EventStreamAnalyzer
+AnalyzerApplication --> ReportWriter
+AnalyzerFactory ..> EventStreamAnalyzer : creates
+AnalyzerFactory ..> LineParser : creates
+AnalyzerFactory ..> RecordClassifier : creates chain
+AnalyzerFactory ..> AggregationEngine : creates
+AnalyzerFactory ..> ReportWriter : creates
+
+EventStreamAnalyzer --> LineParser
+EventStreamAnalyzer --> RecordClassifier
+EventStreamAnalyzer --> AggregationEngine
+
+LineParser <|.. KeyValueLineParser
+KeyValueLineParser ..> ParsedLine : produces
+RecordClassifier --> RecordClassifier : next
+RecordClassifier <|-- SensorReadingClassifier
+RecordClassifier <|-- DeviceEventClassifier
+RecordClassifier <|-- AccessRecordClassifier
+RecordClassifier ..> EventRecord : produces
+
+EventRecord <|.. SensorReading
+EventRecord <|.. DeviceEvent
+EventRecord <|.. AccessRecord
+DeviceEvent --> Severity
+
+Aggregator <|.. SensorAggregator
+Aggregator <|.. DeviceAggregator
+Aggregator <|.. AccessAggregator
+AggregationEngine o--> Aggregator : registry
+AggregationEngine --> ReportFile : builds
+SensorAggregator ..> SensorStats : builds
+DeviceAggregator ..> DeviceReport : builds
+AccessAggregator ..> DoorStats : builds
+DeviceReport --> DeviceStats
+DoorStats --> DecisionTimes
+SensorAggregator ..> Statistics : uses
+AccessAggregator ..> Statistics : uses
+
+ReportWriter <|.. JsonReportWriter
+JsonReportWriter --> ReportFile : writes
+
+@enduml
