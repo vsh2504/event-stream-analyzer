@@ -66,11 +66,42 @@ public final class Statistics {
      * output has no trailing .0 on whole numbers.
      */
     public static Number roundToOneDecimal(double value) {
-        BigDecimal rounded = BigDecimal.valueOf(value)
+        return roundToOneDecimal(BigDecimal.valueOf(value));
+    }
+
+    public static Number roundToOneDecimal(BigDecimal value) {
+        BigDecimal rounded = value
                 .setScale(1, RoundingMode.HALF_UP);
         if (rounded.stripTrailingZeros().scale() <= 0) {
-            return rounded.longValue();
+            try {
+                return rounded.longValueExact();
+            } catch (ArithmeticException outsideLongRange) {
+                return rounded.toBigIntegerExact();
+            }
         }
-        return rounded.doubleValue();
+        return rounded;
+    }
+
+    private static final java.math.MathContext PRECISION = java.math.MathContext.DECIMAL128;
+
+    public static BigDecimal decimalMean(List<BigDecimal> values) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (BigDecimal value : values) sum = sum.add(value);
+        return sum.divide(BigDecimal.valueOf(values.size()), PRECISION);
+    }
+
+    public static BigDecimal decimalMedian(List<BigDecimal> sorted) {
+        int n = sorted.size();
+        return n % 2 == 1 ? sorted.get(n / 2)
+                : sorted.get(n / 2 - 1).add(sorted.get(n / 2)).divide(BigDecimal.valueOf(2));
+    }
+
+    public static BigDecimal decimalStdDev(List<BigDecimal> values, BigDecimal mean) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (BigDecimal value : values) {
+            BigDecimal difference = value.subtract(mean);
+            sum = sum.add(difference.multiply(difference));
+        }
+        return sum.divide(BigDecimal.valueOf(values.size()), PRECISION).sqrt(PRECISION);
     }
 }

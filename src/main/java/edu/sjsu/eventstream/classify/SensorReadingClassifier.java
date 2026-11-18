@@ -17,7 +17,12 @@ public final class SensorReadingClassifier extends RecordClassifier {
         Optional<String> sensor = line.getNonBlank("sensor");
         Optional<Double> reading = line.getDouble("reading");
         if (sensor.isPresent() && reading.isPresent()) {
-            return Optional.of(new SensorReading(sensor.get(), reading.get()));
+            try {
+                return Optional.of(new SensorReading(sensor.get(),
+                        new java.math.BigDecimal(line.get("reading").orElseThrow().trim())));
+            } catch (NumberFormatException invalidDecimal) {
+                return Optional.empty();
+            }
         }
         return Optional.empty();
     }

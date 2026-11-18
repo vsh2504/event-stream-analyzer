@@ -17,7 +17,7 @@ import java.util.TreeMap;
  */
 public final class SensorAggregator implements Aggregator<SensorReading> {
 
-    private final Map<String, List<Double>> valuesBySensor = new TreeMap<>();
+    private final Map<String, List<java.math.BigDecimal>> valuesBySensor = new TreeMap<>();
 
     @Override
     public Class<SensorReading> recordType() {
@@ -32,24 +32,24 @@ public final class SensorAggregator implements Aggregator<SensorReading> {
     @Override
     public void accept(SensorReading record) {
         valuesBySensor.computeIfAbsent(record.sensor(), key -> new ArrayList<>())
-                .add(record.reading());
+                .add(record.decimalReading());
     }
 
     @Override
     public Object buildReport() {
         Map<String, SensorStats> report = new TreeMap<>();
-        for (Map.Entry<String, List<Double>> entry : valuesBySensor.entrySet()) {
-            List<Double> sorted = new ArrayList<>(entry.getValue());
-            sorted.sort(Double::compareTo);
-            double mean = Statistics.mean(sorted);
+        for (Map.Entry<String, List<java.math.BigDecimal>> entry : valuesBySensor.entrySet()) {
+            List<java.math.BigDecimal> sorted = new ArrayList<>(entry.getValue());
+            sorted.sort(java.math.BigDecimal::compareTo);
+            java.math.BigDecimal mean = Statistics.decimalMean(sorted);
             SensorStats stats = new SensorStats(
                     sorted.size(),
                     Statistics.roundToOneDecimal(sorted.get(0)),
-                    Statistics.roundToOneDecimal(Statistics.medianOfSorted(sorted)),
+                    Statistics.roundToOneDecimal(Statistics.decimalMedian(sorted)),
                     Statistics.roundToOneDecimal(mean),
                     Statistics.roundToOneDecimal(sorted.get(sorted.size() - 1)),
                     Statistics.roundToOneDecimal(
-                            Statistics.populationStdDev(sorted, mean)));
+                            Statistics.decimalStdDev(sorted, mean)));
             report.put(entry.getKey(), stats);
         }
         return report;
