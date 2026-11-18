@@ -9,6 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KeyValueLineParserTest {
 
+    @Test
+    void rejectsMisplacedQuotesAndTrailingCharacters() {
+        for (String line : java.util.List.of(
+                "ts=now sensor=bad\" name\" reading=1",
+                "ts=now sensor=\"bad\"suffix reading=1",
+                "ts=now sensor=ok reading=1 msg=bad\" quote\"",
+                "ts=now sen\"sor\"=x reading=1")) {
+            assertTrue(parser.parse(line).isEmpty(), line);
+        }
+    }
+
     private final KeyValueLineParser parser = new KeyValueLineParser();
 
     @Test

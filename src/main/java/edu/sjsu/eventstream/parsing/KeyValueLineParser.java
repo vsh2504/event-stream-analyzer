@@ -30,6 +30,11 @@ public final class KeyValueLineParser implements LineParser {
         if (line.isBlank()) {
             return Optional.empty();
         }
+        // Quotes delimit an entire value, never part of a key or an
+        // unquoted token. Validate boundaries before splitting tokens.
+        if (!line.matches("\\s*[^\\s=\"]+=(?:\"[^\"]*\"|[^\\s\"]*)(?:[ \\t]+[^\\s=\"]+=(?:\"[^\"]*\"|[^\\s\"]*))*[ \\t]*")) {
+            return Optional.empty();
+        }
         List<String> tokens = tokenize(line);
         if (tokens == null) {
             return Optional.empty();
