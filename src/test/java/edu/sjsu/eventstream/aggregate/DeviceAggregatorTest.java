@@ -67,6 +67,6 @@ class DeviceAggregatorTest {
 
     @Test
     void emptyAggregatorProducesEmptyReport() {
-        assertTrue(reportOf(new DeviceAggregator()).isEmpty());
+        assertTrue(((java.util.Map<?, ?>) new DeviceAggregator().buildReport()).isEmpty());
     }
 }

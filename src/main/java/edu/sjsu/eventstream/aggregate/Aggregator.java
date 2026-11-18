@@ -14,7 +14,7 @@ public interface Aggregator<T extends EventRecord> {
     Class<T> recordType();
 
     /** The output file this aggregator's report belongs in. */
-    String fileName();
+    String reportName();
 
     void accept(T record);
 

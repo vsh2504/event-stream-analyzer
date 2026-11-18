@@ -86,14 +86,18 @@ public final class Statistics {
 
     public static BigDecimal decimalMean(List<BigDecimal> values) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (BigDecimal value : values) sum = sum.add(value);
+        for (BigDecimal value : values) {
+            sum = sum.add(value);
+        }
         return sum.divide(BigDecimal.valueOf(values.size()), PRECISION);
     }
 
     public static BigDecimal decimalMedian(List<BigDecimal> sorted) {
         int n = sorted.size();
-        return n % 2 == 1 ? sorted.get(n / 2)
-                : sorted.get(n / 2 - 1).add(sorted.get(n / 2)).divide(BigDecimal.valueOf(2));
+        if (n % 2 == 1) {
+            return sorted.get(n / 2);
+        }
+        return sorted.get(n / 2 - 1).add(sorted.get(n / 2)).divide(BigDecimal.valueOf(2));
     }
 
     public static BigDecimal decimalStdDev(List<BigDecimal> values, BigDecimal mean) {

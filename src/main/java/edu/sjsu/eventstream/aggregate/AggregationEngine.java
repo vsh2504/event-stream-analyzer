@@ -35,7 +35,7 @@ public final class AggregationEngine {
     public List<ReportFile> buildReports() {
         List<ReportFile> reports = new ArrayList<>();
         for (Aggregator<?> aggregator : aggregators) {
-            reports.add(new ReportFile(aggregator.fileName(), aggregator.buildReport()));
+            reports.add(new ReportFile(aggregator.reportName(), aggregator.buildReport()));
         }
         return reports;
     }

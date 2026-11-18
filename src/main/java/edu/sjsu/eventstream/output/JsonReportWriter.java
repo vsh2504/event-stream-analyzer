@@ -3,7 +3,6 @@ package edu.sjsu.eventstream.output;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.sjsu.eventstream.aggregate.ReportFile;
-import edu.sjsu.eventstream.report.DeviceReport;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,16 +29,13 @@ public final class JsonReportWriter implements ReportWriter {
             String json = isEmptyReport(report.model())
                     ? "{}"
                     : gson.toJson(report.model());
-            Files.writeString(outdir.resolve(report.fileName()), json + "\n");
+            Files.writeString(outdir.resolve(report.reportName() + ".json"), json + "\n");
         }
     }
 
     private boolean isEmptyReport(Object model) {
         if (model instanceof Map<?, ?> map) {
             return map.isEmpty();
-        }
-        if (model instanceof DeviceReport deviceReport) {
-            return deviceReport.isEmpty();
         }
         return false;
     }

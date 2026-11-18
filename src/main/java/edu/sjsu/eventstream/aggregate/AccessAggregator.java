@@ -31,8 +31,8 @@ public final class AccessAggregator implements Aggregator<AccessRecord> {
     }
 
     @Override
-    public String fileName() {
-        return "access.json";
+    public String reportName() {
+        return "access";
     }
 
     @Override

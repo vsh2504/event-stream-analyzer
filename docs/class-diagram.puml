@@ -91,7 +91,7 @@ class AggregationEngine {
 }
 
 class ReportFile {
-  fileName : String
+  reportName : String
   model : Object
 }
 

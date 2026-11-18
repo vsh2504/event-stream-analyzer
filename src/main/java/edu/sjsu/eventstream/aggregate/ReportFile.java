@@ -5,5 +5,5 @@ package edu.sjsu.eventstream.aggregate;
  * report model. Writers (JSON today, CSV in the future) serialize the
  * model without knowing how it was computed.
  */
-public record ReportFile(String fileName, Object model) {
+public record ReportFile(String reportName, Object model) {
 }

@@ -25,8 +25,8 @@ public final class SensorAggregator implements Aggregator<SensorReading> {
     }
 
     @Override
-    public String fileName() {
-        return "sensors.json";
+    public String reportName() {
+        return "sensors";
     }
 
     @Override

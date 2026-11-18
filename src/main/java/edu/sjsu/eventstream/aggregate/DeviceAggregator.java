@@ -27,8 +27,8 @@ public final class DeviceAggregator implements Aggregator<DeviceEvent> {
     }
 
     @Override
-    public String fileName() {
-        return "devices.json";
+    public String reportName() {
+        return "devices";
     }
 
     @Override
@@ -41,7 +41,7 @@ public final class DeviceAggregator implements Aggregator<DeviceEvent> {
     @Override
     public Object buildReport() {
         if (countsByDevice.isEmpty()) {
-            return new DeviceReport(Map.of(), Map.of());
+            return Map.of();
         }
         Map<Severity, Integer> bySeverity = new LinkedHashMap<>();
         bySeverity.put(Severity.CRITICAL, severityCounts.getOrDefault(Severity.CRITICAL, 0));

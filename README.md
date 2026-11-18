@@ -69,7 +69,7 @@ The full design document, including the UML class diagram and an extensibility a
 mvn test
 ```
 
-The suite has 47 JUnit 5 tests covering the parser (quoted values, corrupted lines, CRLF input), the classifier chain (each record type, invalid values, precedence), each aggregator (including tie-breaking, nearest-rank percentiles, and rounding), and the command line application end to end (error exit codes, empty input, and the assignment's sample input with hand-checked expected output).
+The suite has 54 JUnit 5 tests covering the parser (quoted values, delimiter edge cases, corrupted lines, CRLF input), the classifier chain (each record type, invalid values, precedence), each aggregator (including tie-breaking, nearest-rank percentiles, decimal precision, and rounding), and the command line application end to end (error exit codes, empty input, and the assignment's sample input with hand-checked expected output).
 
 ## Project layout
 
